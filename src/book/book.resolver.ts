@@ -1,15 +1,18 @@
 import { Resolver, Query } from "@nestjs/graphql"
+import { Book } from "./book.schema"
+import { Book as BookModel } from "../graphql";
 
-@Resolver("Book")
+@Resolver(of => Book)
 export class BookResolver {
 
-    @Query("books")
+    @Query(returns => [Book], { name: "getBooks" })
     getAllBooks() {
-        //return books
-        return [
-            { id: 1, title: "Harry Potter", price: 500 },
+        let arr: BookModel[] = [
+            { id: 1, title: "Black Panther", price: 500 },
             { id: 2, title: "Spider Man", price: 800 },
             { id: 3, title: "Iron Man", price: 600 },
         ]
+        //return books
+        return arr
     }
 }
