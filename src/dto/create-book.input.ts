@@ -3,9 +3,6 @@ import { CreateCategoryInput } from './create-category.input';
 
 @InputType()
 export class CreateBookInput {
-  @Field(() => Int)
-  id: number;
-
   @Field()
   ISBN: string;
 

@@ -8,37 +8,78 @@ export class BooksService {
   constructor(@Inject(PrismaService) private prismaService: PrismaService) {}
 
   async create(createBookInput: CreateBookInput) {
-    return this.prismaService.book.create({
-      data: {
-        ISBN: createBookInput.ISBN,
-        title: createBookInput.title,
-        price: createBookInput.price,
-        category: {
-          connectOrCreate: {
-            where: { id: createBookInput.category.id },
-            create: { name: createBookInput.category.name },
+    const categoryId = (await this.prismaService.category.count()) + 1;
+    try {
+      const newBook = this.prismaService.book.create({
+        data: {
+          ISBN: createBookInput.ISBN,
+          title: createBookInput.title,
+          price: createBookInput.price,
+          category: {
+            connectOrCreate: {
+              where: { id: createBookInput.category.id || categoryId },
+              create: { name: createBookInput.category.name },
+            },
           },
         },
-      },
-      include: {
+        include: {
+          category: true,
+        }
+        
+      });
+      return newBook;
+    } catch (error) {
+      console.log(error);
+    }
+   
+  }
+
+  findAll() {
+    return this.prismaService.book.findMany({
+      include:{
         category: true,
       }
     });
   }
 
-  findAll() {
-    return `This action returns all books`;
-  }
-
   findOne(id: number) {
-    return `This action returns a #${id} book`;
+    return this.prismaService.book.findFirstOrThrow({
+      where:{
+        id
+      },
+      include:{
+        category: true,
+      }
+    });
   }
 
   update(id: number, updateBookInput: UpdateBookInput) {
-    return `This action updates a #${id} book`;
+    return this.prismaService.book.update({
+      where: {
+        id,
+      },
+      data:{
+        ISBN: updateBookInput.ISBN,
+          title: updateBookInput.title,
+          price: updateBookInput.price,
+          category: {
+            connectOrCreate: {
+              where: { id: updateBookInput.category.id },
+              create: { name: updateBookInput.category.name },
+            },
+          }
+      },
+      include:{
+        category: true
+      }
+    })
   }
 
   remove(id: number) {
-    return `This action removes a #${id} book`;
+    return this.prismaService.book.delete({
+      where:{
+        id
+      },
+    });
   }
 }

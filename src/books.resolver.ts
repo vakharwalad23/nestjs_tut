@@ -11,7 +11,7 @@ export class BooksResolver {
   @Mutation(() => Book)
   async createBook(@Args('createBookInput') createBookInput: CreateBookInput) {
     const createdBook = await this.booksService.create(createBookInput);
-    return createBookInput;
+    return createdBook;
   }
 
   @Query(() => [Book], { name: 'books' })
@@ -25,7 +25,7 @@ export class BooksResolver {
   }
 
   @Mutation(() => Book)
-  updateBook(@Args('updateBookInput') updateBookInput: UpdateBookInput) {
+  async updateBook(@Args('updateBookInput') updateBookInput: UpdateBookInput) {
     return this.booksService.update(updateBookInput.id, updateBookInput);
   }
 
