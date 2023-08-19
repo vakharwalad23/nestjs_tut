@@ -14,13 +14,16 @@ export class BooksService {
         title: createBookInput.title,
         price: createBookInput.price,
         category: {
-          create: {
-            id: createBookInput.category.id,
-            name: createBookInput.category.name,
-          }
-        }
+          connectOrCreate: {
+            where: { id: createBookInput.category.id },
+            create: { name: createBookInput.category.name },
+          },
+        },
+      },
+      include: {
+        category: true,
       }
-    })
+    });
   }
 
   findAll() {
